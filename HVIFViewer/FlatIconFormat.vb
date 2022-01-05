@@ -17,11 +17,11 @@ Public Enum GradientType As Byte
     SqrtXy
 End Enum
 
-Public Enum ShapeType
+Public Enum ShapeType As Byte
     PathSource = 10
 End Enum
 
-Public Enum TransformerType
+Public Enum TransformerType As Byte
     Affine = 20
     Contour = 21
     Perspective = 22
@@ -29,7 +29,7 @@ Public Enum TransformerType
 End Enum
 
 <Flags>
-Public Enum GradientFlag
+Public Enum GradientFlag As Byte
     Transform = 1 << 1
     NoAlpha = 1 << 2
     _16BitColors = 1 << 3
@@ -37,7 +37,7 @@ Public Enum GradientFlag
 End Enum
 
 <Flags>
-Public Enum PathFlag
+Public Enum PathFlag As Byte
     Closed = 1 << 1
     UsesCommands = 1 << 2
     NoCurves = 1 << 3
@@ -51,7 +51,7 @@ Public Enum PathCommand
 End Enum
 
 <Flags>
-Public Enum ShapeFlag
+Public Enum ShapeFlag As Byte
     Transform = 1 << 1
     Hinting = 1 << 2
     LodScale = 1 << 3

@@ -1,6 +1,5 @@
-﻿Imports Microsoft.VisualBasic
-Namespace Agg
-    Public Enum LineCap
+﻿Namespace Agg
+    Public Enum LineCap As Byte
         ButtCap
         SquareCap
         RoundCap
