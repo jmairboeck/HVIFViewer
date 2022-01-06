@@ -83,11 +83,15 @@ Public Class HVIFControl
                             gradientBrush = New LinearGradientBrush()
                         Case GradientType.Circular
                             gradientBrush = New RadialGradientBrush()
+                        ' TODO: handle these types correctly
                         Case GradientType.Diamond
+                            gradientBrush = New LinearGradientBrush()
                         Case GradientType.Conic
+                            gradientBrush = New LinearGradientBrush()
                         Case GradientType.Xy
+                            gradientBrush = New LinearGradientBrush()
                         Case GradientType.SqrtXy
-                            ' TODO: handle types
+                            gradientBrush = New LinearGradientBrush()
                     End Select
                     If gradientFlags.HasFlag(GradientFlag.Transform) Then
                         gradientBrush.Transform = New MatrixTransform(readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24())
@@ -130,7 +134,7 @@ Public Class HVIFControl
             offset += 2
             Dim pathCommands As PathCommand() = Nothing
             If pathFlags.HasFlag(PathFlag.UsesCommands) Then
-                ReDim pathCommands(pathCount - 1)
+                ReDim pathCommands(pointCount - 1)
                 Dim commandPosition = 0
                 For j = 0 To pointCount - 1
                     pathCommands(j) = CType((buffer(offset) >> commandPosition) And 3, PathCommand)
@@ -163,6 +167,7 @@ Public Class HVIFControl
                     End Sub
                 Dim readCurve =
                     Sub()
+                        ' FIXME: something is wrong here
                         lastPoint = New Point(readCoordinate(), readCoordinate())
                         If first Then
                             path.StartPoint = lastPoint

@@ -7,6 +7,7 @@ This is a WPF based renderer for the [Haiku Vector Icon Format (HVIF)](https://e
  * most gradients (except linear and radial)
  * transformers
  * hinting?
+ * curves are not handled correctly
  
 ## Building and testing
 This can be built using any modern Visual Studio with VB.NET enabled. Requires .NET 4.0 or higher and `System.ValueTuple`.
