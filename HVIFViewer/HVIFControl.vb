@@ -151,38 +151,40 @@ Public Class HVIFControl
             Dim path As New PathFigure With {
                 .IsClosed = pathFlags.HasFlag(PathFlag.Closed)
             }
-            Dim lastPoint As Point
+            Dim lastPoint, lastPointOut, firstPointIn As Point
             For j = 0 To pointCount - 1
                 Dim first = j = 0
+                Dim addLineSegment = Sub() path.Segments.Add(New BezierSegment With {
+                        .Point1 = lastPointOut,
+                        .Point2 = lastPoint,
+                        .Point3 = lastPoint
+                    })
                 Dim readLine =
                     Sub()
                         lastPoint = New Point(readCoordinate(), readCoordinate())
                         If first Then
                             path.StartPoint = lastPoint
+                            firstPointIn = lastPoint
                         Else
-                            path.Segments.Add(New LineSegment With {
-                                .Point = lastPoint
-                            })
+                            addLineSegment()
                         End If
+                        lastPointOut = lastPoint
                     End Sub
                 Dim readCurve =
                     Sub()
-                        ' FIXME: something is wrong here
                         lastPoint = New Point(readCoordinate(), readCoordinate())
+                        Dim pointIn As New Point(readCoordinate(), readCoordinate())
                         If first Then
                             path.StartPoint = lastPoint
-                            ' pointIn and pointOut for the first path element are ignored
-                            readCoordinate()
-                            readCoordinate()
-                            readCoordinate()
-                            readCoordinate()
+                            firstPointIn = pointIn
                         Else
                             path.Segments.Add(New BezierSegment With {
-                                .Point3 = lastPoint,
-                                .Point1 = New Point(readCoordinate(), readCoordinate()),
-                                .Point2 = New Point(readCoordinate(), readCoordinate())
+                                .Point1 = lastPointOut,
+                                .Point2 = pointIn,
+                                .Point3 = lastPoint
                             })
                         End If
+                        lastPointOut = New Point(readCoordinate(), readCoordinate())
                     End Sub
 
                 If pathFlags.HasFlag(PathFlag.NoCurves) Then
@@ -190,13 +192,13 @@ Public Class HVIFControl
                 ElseIf pathFlags.HasFlag(PathFlag.UsesCommands) Then
                     Select Case pathCommands(j)
                         Case PathCommand.HLine
-                            path.Segments.Add(New LineSegment With {
-                                .Point = New Point(readCoordinate(), lastPoint.Y)
-                            })
+                            lastPoint = New Point(readCoordinate(), lastPoint.Y)
+                            addLineSegment()
+                            lastPointOut = lastPoint
                         Case PathCommand.VLine
-                            path.Segments.Add(New LineSegment With {
-                                .Point = New Point(lastPoint.X, readCoordinate())
-                            })
+                            lastPoint = New Point(lastPoint.X, readCoordinate())
+                            addLineSegment()
+                            lastPointOut = lastPoint
                         Case PathCommand.Line
                             readLine()
                         Case PathCommand.Curve
@@ -206,6 +208,13 @@ Public Class HVIFControl
                     readCurve()
                 End If
             Next
+            If pathFlags.HasFlag(PathFlag.Closed) Then
+                path.Segments.Add(New BezierSegment With {
+                    .Point1 = lastPointOut,
+                    .Point2 = firstPointIn,
+                    .Point3 = path.StartPoint
+                })
+            End If
             Paths.Add(path)
         Next
         Dim shapeCount = buffer(offset)
