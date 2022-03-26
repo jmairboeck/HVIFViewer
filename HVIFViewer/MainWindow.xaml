@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HVIFViewer"
+        xmlns:HVIFControl="clr-namespace:HVIFControl;assembly=HVIFControl"
         mc:Ignorable="d"
         Title="{Binding FileName, StringFormat=HVIFViewer - {0}, TargetNullValue=HVIFViewer}" Height="350" Width="300">
     <Window.DataContext>
@@ -22,6 +23,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Button Command="Open" Content="_Open File" Margin="10" Padding="5"/>
-        <local:HVIFControl Grid.Row="1" Grid.ColumnSpan="2" FileName="{Binding FileName}" Margin="10"/>
+        <HVIFControl:HVIFControl Grid.Row="1" Grid.ColumnSpan="2" FileName="{Binding FileName}" Margin="10"/>
     </Grid>
 </Window>
