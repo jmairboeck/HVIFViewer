@@ -140,10 +140,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Import Include="HVIFViewer" />
-    <Import Include="HVIFViewer.My" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\HVIFControl\HVIFControl.vbproj">
       <Project>{e2087363-603c-4c73-bfd1-12c95c28935c}</Project>
       <Name>HVIFControl</Name>
