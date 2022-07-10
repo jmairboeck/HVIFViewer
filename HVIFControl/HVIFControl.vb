@@ -80,7 +80,10 @@ Public Class HVIFControl
                     Dim gradientBrush As GradientBrush = Nothing
                     Select Case gradientType
                         Case GradientType.Linear
-                            gradientBrush = New LinearGradientBrush()
+                            gradientBrush = New LinearGradientBrush() With {
+                                .StartPoint = New Point(0, 0.5),
+                                .EndPoint = New Point(1, 0.5)
+                            }
                         Case GradientType.Circular
                             gradientBrush = New RadialGradientBrush()
                         ' TODO: handle these types correctly
