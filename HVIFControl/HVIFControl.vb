@@ -81,11 +81,16 @@ Public Class HVIFControl
                     Select Case gradientType
                         Case GradientType.Linear
                             gradientBrush = New LinearGradientBrush() With {
-                                .StartPoint = New Point(0, 0.5),
-                                .EndPoint = New Point(1, 0.5)
+                                .StartPoint = New Point(-64, 0),
+                                .EndPoint = New Point(64, 0)
                             }
                         Case GradientType.Circular
-                            gradientBrush = New RadialGradientBrush()
+                            gradientBrush = New RadialGradientBrush() With {
+                                .Center = New Point(),
+                                .GradientOrigin = New Point(),
+                                .RadiusX = 64,
+                                .RadiusY = 64
+                            }
                         ' TODO: handle these types correctly
                         Case GradientType.Diamond
                             gradientBrush = New LinearGradientBrush()
@@ -96,6 +101,7 @@ Public Class HVIFControl
                         Case GradientType.SqrtXy
                             gradientBrush = New LinearGradientBrush()
                     End Select
+                    gradientBrush.MappingMode = BrushMappingMode.Absolute
                     If gradientFlags.HasFlag(GradientFlag.Transform) Then
                         gradientBrush.Transform = New MatrixTransform(readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24())
                     End If
