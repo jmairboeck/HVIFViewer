@@ -41,7 +41,7 @@ Public Class HVIFControl
         Dim buffer = File.ReadAllBytes(value)
         Dim magic = BitConverter.ToInt32(buffer, 0)
         If magic <> &H6669636E Then
-            Throw New Exception()
+            Throw New FormatException("The icon is not in HVIF format")
         End If
         Dim styleCount = buffer(4)
         Dim offset = 5
