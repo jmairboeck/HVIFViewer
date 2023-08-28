@@ -2,7 +2,9 @@
 Imports System.Collections.Generic
 Imports System.IO
 Imports System.Windows
+Imports System.Windows.Controls
 Imports System.Windows.Media
+Imports System.Windows.Media.Media3D
 Imports System.Windows.Shapes
 
 Public Class HVIFControl
@@ -23,7 +25,7 @@ Public Class HVIFControl
 
     Public ReadOnly Property Paths() As PathFigureCollection = New PathFigureCollection
 
-    Public ReadOnly Property Shapes() As List(Of Shapes.Path) = New List(Of Shapes.Path)
+    Public ReadOnly Property Shapes() As List(Of FrameworkElement) = New List(Of FrameworkElement)
 
     Private Shared Sub OnFileNameChanged(d As DependencyObject, e As DependencyPropertyChangedEventArgs)
         Dim control = DirectCast(d, HVIFControl)
@@ -241,6 +243,7 @@ Public Class HVIFControl
                         .Fill = Styles(styleIndex),
                         .Data = pathGeometry
                     }
+                    Dim shape As FrameworkElement = path
                     For j = 0 To shapePathCount - 1
                         Dim pathIndex = buffer(offset)
                         offset += 1
@@ -261,6 +264,7 @@ Public Class HVIFControl
                     If shapeFlags.HasFlag(ShapeFlag.HasTransformers) Then
                         Dim transformerCount = buffer(offset)
                         offset += 1
+                        Dim viewport2DVisual As Viewport2DVisual3D = Nothing
                         For j = 0 To transformerCount - 1
                             Dim transformerType = CType(buffer(offset), TransformerType)
                             Select Case transformerType
@@ -280,8 +284,44 @@ Public Class HVIFControl
                                     End If
                                     offset += 4
                                 Case TransformerType.Perspective
-                                    ' TODO: handle this
+                                    ' TODO: this is untested and probably not correct
                                     offset += 1
+                                    Dim matrix As New Matrix3D(readFloat24(), readFloat24(), readFloat24(), 0, readFloat24(), readFloat24(), readFloat24(), 0, readFloat24(), readFloat24(), readFloat24(), 0, 0, 0, 0, 1)
+                                    If viewport2DVisual Is Nothing Then
+                                        Dim meshGeometry As New MeshGeometry3D
+                                        meshGeometry.Positions.Add(New Point3D(0, 0, 0))
+                                        meshGeometry.Positions.Add(New Point3D(0, 1, 0))
+                                        meshGeometry.Positions.Add(New Point3D(1, 0, 0))
+                                        meshGeometry.Positions.Add(New Point3D(1, 1, 0))
+                                        meshGeometry.TextureCoordinates.Add(New Point(0, 1))
+                                        meshGeometry.TextureCoordinates.Add(New Point(0, 0))
+                                        meshGeometry.TextureCoordinates.Add(New Point(1, 1))
+                                        meshGeometry.TextureCoordinates.Add(New Point(1, 0))
+                                        meshGeometry.TriangleIndices.Add(0)
+                                        meshGeometry.TriangleIndices.Add(2)
+                                        meshGeometry.TriangleIndices.Add(1)
+                                        meshGeometry.TriangleIndices.Add(2)
+                                        meshGeometry.TriangleIndices.Add(3)
+                                        meshGeometry.TriangleIndices.Add(1)
+                                        Dim material As New DiffuseMaterial(Brushes.White)
+                                        Viewport2DVisual3D.SetIsVisualHostMaterial(material, True)
+                                        Dim viewport As New Viewport3D With {
+                                            .Tag = path.Tag,
+                                            .Camera = New OrthographicCamera(New Point3D(0.5, 0.5, 1), New Vector3D(0, 0, -1), New Vector3D(0, 1, 0), 5)
+                                        }
+                                        viewport2DVisual = New Viewport2DVisual3D With {
+                                            .Geometry = meshGeometry,
+                                            .Material = material,
+                                            .Visual = path
+                                        }
+                                        viewport.Children.Add(viewport2DVisual)
+                                        viewport.Children.Add(New ModelVisual3D With {
+                                            .Content = New AmbientLight(Colors.White)
+                                        })
+                                        shape = viewport
+                                    End If
+                                    matrix *= viewport2DVisual.Transform.Value
+                                    viewport2DVisual.Transform = New MatrixTransform3D(matrix)
                                 Case TransformerType.Stroke
                                     ' TODO: this is supported only once
                                     Dim lineOptions = buffer(offset + 2)
@@ -303,8 +343,8 @@ Public Class HVIFControl
                         Next
                     End If
 
-                    Shapes.Add(path)
-                    AddVisualChild(path)
+                    Shapes.Add(shape)
+                    AddVisualChild(shape)
                 Case Else
                     offset += BitConverter.ToUInt16(buffer, offset) + 2
                     Continue For
