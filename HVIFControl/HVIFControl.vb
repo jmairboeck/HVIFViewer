@@ -286,7 +286,7 @@ Public Class HVIFControl
                                 Case TransformerType.Perspective
                                     ' TODO: this is untested and probably not correct
                                     offset += 1
-                                    Dim matrix As New Matrix3D(readFloat24(), readFloat24(), readFloat24(), 0, readFloat24(), readFloat24(), readFloat24(), 0, readFloat24(), readFloat24(), readFloat24(), 0, 0, 0, 0, 1)
+                                    Dim matrix As New Matrix3D(readFloat24(), readFloat24(), 0, readFloat24(), readFloat24(), readFloat24(), 0, readFloat24(), 0, 0, 1, 0, readFloat24(), readFloat24(), 0, readFloat24())
                                     If viewport2DVisual Is Nothing Then
                                         Dim meshGeometry As New MeshGeometry3D
                                         meshGeometry.Positions.Add(New Point3D(0, 0, 0))
