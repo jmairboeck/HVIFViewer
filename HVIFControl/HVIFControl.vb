@@ -390,9 +390,10 @@ Public Class HVIFControl
 
     Protected Overrides Function MeasureOverride(availableSize As Size) As Size
         Dim scaleFactor = Math.Min(availableSize.Width, availableSize.Height) / 64
+        Dim transform As New ScaleTransform(scaleFactor, scaleFactor)
         For Each shape In Shapes
             shape.Measure(availableSize)
-            shape.LayoutTransform = New ScaleTransform(scaleFactor, scaleFactor)
+            shape.LayoutTransform = transform
             If shape.Tag IsNot Nothing Then
                 Dim visibilityScale = DirectCast(shape.Tag, (Min As Double, Max As Double))
                 shape.Visibility = If(scaleFactor < visibilityScale.Min OrElse (scaleFactor > visibilityScale.Max AndAlso visibilityScale.Max < 4), Visibility.Hidden, Visibility.Visible)
@@ -402,9 +403,10 @@ Public Class HVIFControl
     End Function
 
     Protected Overrides Function ArrangeOverride(finalSize As Size) As Size
+        Dim size = Math.Min(finalSize.Width, finalSize.Height)
+        Dim finalRect As New Rect(Math.Max((finalSize.Width - finalSize.Height) / 2, 0), Math.Max((finalSize.Height - finalSize.Width) / 2, 0), size, size)
         For Each shape In Shapes
-            Dim size = Math.Min(finalSize.Width, finalSize.Height)
-            shape.Arrange(New Rect(Math.Max((finalSize.Width - finalSize.Height) / 2, 0), Math.Max((finalSize.Height - finalSize.Width) / 2, 0), size, size))
+            shape.Arrange(finalRect)
         Next
         Return finalSize
     End Function
