@@ -403,7 +403,7 @@ Public Class HVIFControl
 
     Protected Overrides Function ArrangeOverride(finalSize As Size) As Size
         For Each shape In Shapes
-            shape.Arrange(New Rect(Math.Max((finalSize.Width - finalSize.Height) / 2, 0), Math.Max((finalSize.Height - finalSize.Width) / 2, 0), finalSize.Width, finalSize.Height))
+            shape.Arrange(New Rect(Math.Max((finalSize.Width - finalSize.Height) / 2, 0), Math.Max((finalSize.Height - finalSize.Width) / 2, 0), Math.Min(finalSize.Width, finalSize.Height), Math.Min(finalSize.Width, finalSize.Height)))
         Next
         Return finalSize
     End Function
