@@ -307,7 +307,7 @@ Public Class HVIFControl
                                         Viewport2DVisual3D.SetIsVisualHostMaterial(material, True)
                                         Dim viewport As New Viewport3D With {
                                             .Tag = path.Tag,
-                                            .Camera = New OrthographicCamera(New Point3D(0.5, 0.5, 1), New Vector3D(0, 0, -1), New Vector3D(0, 1, 0), 5)
+                                            .Camera = New OrthographicCamera(New Point3D(0.5, 0.5, 1), New Vector3D(0, 0, -1), New Vector3D(0, 1, 0), 1)
                                         }
                                         viewport2DVisual = New Viewport2DVisual3D With {
                                             .Geometry = meshGeometry,
@@ -318,6 +318,12 @@ Public Class HVIFControl
                                         viewport.Children.Add(New ModelVisual3D With {
                                             .Content = New AmbientLight(Colors.White)
                                         })
+                                        Dim geometryGroup As New GeometryGroup
+                                        path.Data = geometryGroup
+                                        geometryGroup.Children.Add(pathGeometry)
+                                        ' invisible dummy line for fixing the dimensions as (0,0)/(64,64) (Viewport3D scales the geometry to the full size otherwise)
+                                        ' TODO: this breaks when the actual pathGeometry exceeds these coordinates
+                                        geometryGroup.Children.Add(New PathGeometry({New PathFigure(New Point(0, 0), {New LineSegment(New Point(64, 64), False)}, False)}))
                                         shape = viewport
                                     End If
                                     matrix *= viewport2DVisual.Transform.Value
