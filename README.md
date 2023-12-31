@@ -5,7 +5,7 @@ This is a WPF based renderer for the [Haiku Vector Icon Format (HVIF)](https://e
 
 ## Missing and incomplete features
  * most gradients (except linear and radial)
- * transformers
+ * (multiple) transformers
  * hinting?
  
 ## Building and testing
@@ -17,4 +17,4 @@ For testing, the HVIF files from [this repository](https://github.com/darealshin
 MIT (inspired by source code from the Haiku project)
 
 ## Credits
-The parser code is based on Haiku's [libicon](https://git.haiku-os.org/haiku/tree/src/libs/icon) and [this article](http://blog.leahhanson.us/post/recursecenter2016/haiku_icons.html) by Leah Hanson for the initial format description.
+The parser code is based on Haiku's [libicon](https://git.haiku-os.org/haiku/tree/src/libs/icon), [libagg headers](https://git.haiku-os.org/haiku/tree/headers/libs/agg) and [this article](http://blog.leahhanson.us/post/recursecenter2016/haiku_icons.html) by Leah Hanson for the initial format description.
