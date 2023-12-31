@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AggMathStroke.vb" />
+    <Compile Include="AggTransPerspective.vb" />
     <Compile Include="FlatIconFormat.vb" />
     <Compile Include="HVIFControl.vb" />
     <Compile Include="My Project\AssemblyInfo.vb">

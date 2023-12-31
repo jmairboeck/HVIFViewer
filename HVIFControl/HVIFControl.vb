@@ -261,6 +261,7 @@ Public Class HVIFControl
                     If shapeFlags.HasFlag(ShapeFlag.HasTransformers) Then
                         Dim transformerCount = buffer(offset)
                         offset += 1
+                        Dim perspectiveTransformer As Agg.TransPerspective = Nothing
                         For j = 0 To transformerCount - 1
                             Dim transformerType = CType(buffer(offset), TransformerType)
                             Select Case transformerType
@@ -280,8 +281,14 @@ Public Class HVIFControl
                                     End If
                                     offset += 4
                                 Case TransformerType.Perspective
-                                    ' TODO: handle this
+                                    ' TODO: does this need be potentially combined with Affine transformers above?
                                     offset += 1
+                                    Dim transform As New Agg.TransPerspective(readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24())
+                                    If perspectiveTransformer IsNot Nothing Then
+                                        perspectiveTransformer = transform * perspectiveTransformer
+                                    Else
+                                        perspectiveTransformer = transform
+                                    End If
                                 Case TransformerType.Stroke
                                     ' TODO: this is supported only once
                                     Dim lineOptions = buffer(offset + 2)
@@ -301,6 +308,17 @@ Public Class HVIFControl
                                     Continue For
                             End Select
                         Next
+                        If perspectiveTransformer IsNot Nothing Then
+                            For j = 0 To pathGeometry.Figures.Count - 1
+                                pathGeometry.Figures(j) = pathGeometry.Figures(j).Clone()
+                                perspectiveTransformer.Transform(pathGeometry.Figures(j).StartPoint)
+                                For Each segment As BezierSegment In pathGeometry.Figures(j).Segments
+                                    perspectiveTransformer.Transform(segment.Point1)
+                                    perspectiveTransformer.Transform(segment.Point2)
+                                    perspectiveTransformer.Transform(segment.Point3)
+                                Next
+                            Next
+                        End If
                     End If
 
                     Shapes.Add(path)
