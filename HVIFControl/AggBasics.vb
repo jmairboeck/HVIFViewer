@@ -2,9 +2,9 @@
 
 Namespace Agg
     Public Module Basics
-        ''' <summary>
+        ''' <remarks>
         ''' This is declared upstream in agg_trans_affine.h
-        ''' </summary>
+        ''' </remarks>
         Public Const AffineEpsilon As Double = 0.00000000000001
 
         ''' <param name="epsilon">The parameter isn't optional upstream</param>

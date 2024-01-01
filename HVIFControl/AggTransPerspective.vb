@@ -36,7 +36,7 @@ Namespace Agg
         End Sub
 
         Public Shared Operator *(a As TransPerspective, b As TransPerspective) As TransPerspective
-            Dim result As New TransPerspective(
+            Return New TransPerspective(
                 sx:=a.sx * b.sx + a.shx * b.shy + a.tx * b.w0,
                 shx:=a.sx * b.shx + a.shx * b.sy + a.tx * b.w1,
                 tx:=a.sx * b.tx + a.shx * b.ty + a.tx * b.w2,
@@ -47,11 +47,10 @@ Namespace Agg
                 w1:=a.w0 * b.shx + a.w1 * b.sy + a.w2 * b.w1,
                 w2:=a.w0 * b.tx + a.w1 * b.ty + a.w2 * b.w2
             )
-            Return result
         End Operator
 
         Public Shared Operator *(a As Matrix, b As TransPerspective) As TransPerspective
-            Dim result As New TransPerspective(
+            Return New TransPerspective(
                 sx:=a.M11 * b.sx + a.M21 * b.shy + a.OffsetX * b.w0,
                 shx:=a.M11 * b.shx + a.M21 * b.sy + a.OffsetX * b.w1,
                 tx:=a.M11 * b.tx + a.M21 * b.ty + a.OffsetX * b.w2,
@@ -62,10 +61,13 @@ Namespace Agg
                 w1:=b.w1,
                 w2:=b.w2
             )
-            Return result
         End Operator
 
 #Region "Custom additions"
+        ''' <remarks>
+        ''' This &quot;slices&quot; the transformation into an affine one (represented as <see cref="Matrix"/> here).
+        ''' The result is only correct if <see cref="IsAffine"/> is <see langword="True"/>.
+        ''' </remarks>
         Public Shared Narrowing Operator CType(a As TransPerspective) As Matrix
             Return New Matrix(a.sx, a.shy, a.shx, a.sy, a.tx, a.ty)
         End Operator
