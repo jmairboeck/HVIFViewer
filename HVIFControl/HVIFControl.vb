@@ -268,8 +268,12 @@ Public Class HVIFControl
                                 Case TransformerType.Affine
                                     offset += 1
                                     Dim matrix As New Matrix(readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24())
-                                    matrix *= pathGeometry.Transform.Value
-                                    pathGeometry.Transform = New MatrixTransform(matrix)
+                                    ' This uses the perspectiveTransformer to allow combination with arbitrary perspective transformers later
+                                    If perspectiveTransformer IsNot Nothing Then
+                                        perspectiveTransformer = matrix * perspectiveTransformer
+                                    Else
+                                        perspectiveTransformer = New Agg.TransPerspective(matrix)
+                                    End If
                                 Case TransformerType.Contour
                                     ' TODO: this is supported only once (and probably not correct)
                                     path.StrokeThickness = buffer(offset + 1) - 128
@@ -281,7 +285,6 @@ Public Class HVIFControl
                                     End If
                                     offset += 4
                                 Case TransformerType.Perspective
-                                    ' TODO: does this need be potentially combined with Affine transformers above?
                                     offset += 1
                                     Dim transform As New Agg.TransPerspective(readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24(), readFloat24())
                                     If perspectiveTransformer IsNot Nothing Then
@@ -309,15 +312,20 @@ Public Class HVIFControl
                             End Select
                         Next
                         If perspectiveTransformer IsNot Nothing Then
-                            For j = 0 To pathGeometry.Figures.Count - 1
-                                pathGeometry.Figures(j) = pathGeometry.Figures(j).Clone()
-                                perspectiveTransformer.Transform(pathGeometry.Figures(j).StartPoint)
-                                For Each segment As BezierSegment In pathGeometry.Figures(j).Segments
-                                    perspectiveTransformer.Transform(segment.Point1)
-                                    perspectiveTransformer.Transform(segment.Point2)
-                                    perspectiveTransformer.Transform(segment.Point3)
+                            If perspectiveTransformer.IsAffine Then ' set as native transform if possible
+                                pathGeometry.Transform = New MatrixTransform(CType(perspectiveTransformer, Matrix) * pathGeometry.Transform.Value)
+                            Else ' transform all points of the pathGeometry manually
+                                For j = 0 To pathGeometry.Figures.Count - 1
+                                    ' paths are cloned because they might be reused in other shapes, but they need to be modified here
+                                    pathGeometry.Figures(j) = pathGeometry.Figures(j).Clone()
+                                    perspectiveTransformer.Transform(pathGeometry.Figures(j).StartPoint)
+                                    For Each segment As BezierSegment In pathGeometry.Figures(j).Segments
+                                        perspectiveTransformer.Transform(segment.Point1)
+                                        perspectiveTransformer.Transform(segment.Point2)
+                                        perspectiveTransformer.Transform(segment.Point3)
+                                    Next
                                 Next
-                            Next
+                            End If
                         End If
                     End If
 

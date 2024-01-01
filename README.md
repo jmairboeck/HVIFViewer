@@ -5,7 +5,7 @@ This is a WPF based renderer for the [Haiku Vector Icon Format (HVIF)](https://e
 
 ## Missing and incomplete features
  * most gradients (except linear and radial)
- * (multiple) transformers
+ * multiple "Contour" or "Stroke" transformers (does that even make sense?)
  * hinting?
  
 ## Building and testing

@@ -65,6 +65,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AggBasics.vb" />
     <Compile Include="AggMathStroke.vb" />
     <Compile Include="AggTransPerspective.vb" />
     <Compile Include="FlatIconFormat.vb" />
