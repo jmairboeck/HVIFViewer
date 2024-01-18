@@ -1,7 +1,7 @@
 # HVIFViewer
 Haiku Vector Icon Format Viewer using WPF in VB.NET
 
-This is a WPF based renderer for the [Haiku Vector Icon Format (HVIF)](https://en.wikipedia.org/wiki/Haiku_Vector_Icon_Format).
+This is a WPF based renderer for the [Haiku Vector Icon Format (HVIF)](https://en.wikipedia.org/w/index.php?title=Haiku_Vector_Icon_Format&oldid=1150295285).
 
 ## Missing and incomplete features
  * most gradients (except linear and radial)
