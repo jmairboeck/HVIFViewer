@@ -94,8 +94,11 @@ Public Class HVIFControl
                         ' TODO: handle these types correctly
                         Case GradientType.Diamond
                             gradientBrush = New LinearGradientBrush()
-                        Case GradientType.Conic
-                            gradientBrush = New LinearGradientBrush()
+                        Case GradientType.Conic 'approximate with linear gradient
+                            gradientBrush = New LinearGradientBrush() With {
+                                .StartPoint = New Point(64, 0),
+                                .EndPoint = New Point(-64, 0)
+                            }
                         Case GradientType.Xy
                             gradientBrush = New LinearGradientBrush()
                         Case GradientType.SqrtXy
